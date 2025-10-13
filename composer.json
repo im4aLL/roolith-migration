@@ -1,0 +1,23 @@
+{
+  "name": "roolith/migration",
+  "description": "php simple migration",
+  "type": "library",
+  "require": {
+    "roolith/database": "1.4.0",
+    "php": ">=8.0"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Roolith\\Migration\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Hadi",
+      "email": "me@habibhadi.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "version": "1.0.0"
+}

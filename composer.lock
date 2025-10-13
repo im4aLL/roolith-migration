@@ -1,0 +1,65 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "4f027998c004feb6e3d665e03e09f53f",
+    "packages": [
+        {
+            "name": "roolith/database",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/im4aLL/roolith-database.git",
+                "reference": "ed44484d606e09c0c576fd3c40a5b2e85a420aeb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/im4aLL/roolith-database/zipball/ed44484d606e09c0c576fd3c40a5b2e85a420aeb",
+                "reference": "ed44484d606e09c0c576fd3c40a5b2e85a420aeb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo": "*"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.24",
+                "phpunit/phpunit": "^9.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Roolith\\Store\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hadi",
+                    "email": "me@habibhadi.com"
+                }
+            ],
+            "description": "PHP database driver",
+            "support": {
+                "issues": "https://github.com/im4aLL/roolith-database/issues",
+                "source": "https://github.com/im4aLL/roolith-database/tree/1.4.0"
+            },
+            "time": "2025-10-13T05:29:12+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.0"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
