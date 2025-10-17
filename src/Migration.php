@@ -108,22 +108,13 @@ class Migration implements MigrationCoreInterface
         $command = $params[1] ?? "";
         $fileName = $params[2] ?? "";
 
-        switch ($command) {
-            case "migration:create":
-                $this->_createMigrationFile($fileName);
-                break;
-            case "migration:run":
-                $this->_runMigration($fileName);
-                break;
-            case "migration:rollback":
-                $this->_rollbackMigration($fileName);
-                break;
-            case "migration:status":
-                $this->_statusMigration($fileName);
-                break;
-            default:
-                throw new \Exception("Invalid command");
-        }
+        match ($command) {
+            "migration:create" => $this->_createMigrationFile($fileName),
+            "migration:run" => $this->_runMigration($fileName),
+            "migration:rollback" => $this->_rollbackMigration($fileName),
+            "migration:status" => $this->_statusMigration($fileName),
+            default => throw new \Exception("Invalid command"),
+        };
 
         $this->db->disconnect();
     }
@@ -217,6 +208,17 @@ class Migration implements MigrationCoreInterface
             return;
         }
 
+        $this->_executeMigration($migrations);
+    }
+
+    /**
+     * Execute migrations
+     *
+     * @param array $migrations Array of migrations to execute
+     * @return void
+     */
+    private function _executeMigration(array $migrations): void
+    {
         foreach ($migrations as $migration) {
             $migrationClass =
                 $this->_folder .
