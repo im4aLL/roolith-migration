@@ -1,8 +1,9 @@
 <?php
 
 use Roolith\Store\Database;
+use Roolith\Migration\Interfaces\MigrationInterface;
 
-class {filename}
+class {filename} implements MigrationInterface
 {
     public function up(Database $db): void {}
 

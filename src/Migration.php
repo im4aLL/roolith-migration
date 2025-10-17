@@ -2,9 +2,10 @@
 
 namespace Roolith\Migration;
 
+use Roolith\Migration\Interfaces\MigrationCoreInterface;
 use Roolith\Store\Database;
 
-class Migration
+class Migration implements MigrationCoreInterface
 {
     private string $_folder = "migrations";
     private string $_table = "migrations";
@@ -76,7 +77,8 @@ class Migration
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
                     status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
         );
     }
@@ -107,14 +109,17 @@ class Migration
         $fileName = $params[2] ?? "";
 
         switch ($command) {
-            case "create":
+            case "migration:create":
                 $this->_createMigrationFile($fileName);
                 break;
-            case "run":
+            case "migration:run":
                 $this->_runMigration($fileName);
                 break;
-            case "rollback":
+            case "migration:rollback":
                 $this->_rollbackMigration($fileName);
+                break;
+            case "migration:status":
+                $this->_statusMigration($fileName);
                 break;
             default:
                 throw new \Exception("Invalid command");
@@ -134,7 +139,7 @@ class Migration
         $file = $this->_folder . DIRECTORY_SEPARATOR . $fileName . ".php";
 
         if (file_exists($file)) {
-            echo "Migration $fileName already exists";
+            echo "Migration $fileName already exists\n";
 
             return;
         }
@@ -159,7 +164,7 @@ class Migration
             throw new \Exception("Failed to create migration file");
         }
 
-        echo "Migration $fileName created successfully";
+        echo "Migration $fileName created successfully\n";
     }
 
     /**
@@ -177,11 +182,20 @@ class Migration
         return $string;
     }
 
+    /**
+     * Run migrations
+     *
+     * @param string $fileName (name of the migration file - if not provided, run all pending migrations)
+     * @return void
+     */
     private function _runMigration(string $fileName): void
     {
         if (strlen($fileName) > 0) {
             $migration = $this->db
                 ->table($this->_table)
+                ->select([
+                    "orderBy" => "id ASC",
+                ])
                 ->where("name", $fileName)
                 ->where("status", "pending")
                 ->first();
@@ -190,12 +204,15 @@ class Migration
         } else {
             $migrations = $this->db
                 ->table($this->_table)
+                ->select([
+                    "orderBy" => "id ASC",
+                ])
                 ->where("status", "pending")
                 ->get();
         }
 
         if (count($migrations) === 0) {
-            echo "No pending migrations found.";
+            echo "No pending migrations found.\n";
 
             return;
         }
@@ -221,17 +238,23 @@ class Migration
                 ->table($this->_table)
                 ->update(["status" => "completed"], ["id" => $migration->id]);
 
-            echo "Migration $migration->name executed successfully" . PHP_EOL;
+            echo "Migration $migration->name executed successfully\n";
         }
     }
 
+    /**
+     * Rollback a migration
+     *
+     * @param $fileName string
+     * @return void
+     */
     private function _rollbackMigration(string $fileName): void
     {
         $migrationClass =
             $this->_folder . DIRECTORY_SEPARATOR . $fileName . ".php";
 
         if (!file_exists($migrationClass)) {
-            echo "Migration file not found";
+            echo "Migration file not found\n";
             return;
         }
 
@@ -244,5 +267,78 @@ class Migration
         $this->db
             ->table($this->_table)
             ->update(["status" => "pending"], ["name" => $fileName]);
+
+        echo "Migration $fileName rolled back successfully\n";
+    }
+
+    /**
+     * Display the status of all migrations.
+     *
+     * @return void
+     */
+    private function _statusMigration(string $fileName): void
+    {
+        if (!$fileName) {
+            $this->_getStatusOfMigrations();
+
+            return;
+        }
+
+        $this->_getStatusOfMigration($fileName);
+    }
+
+    /**
+     * Display the status of all migrations.
+     *
+     * @return void
+     */
+    private function _getStatusOfMigrations(): void
+    {
+        $migrations = $this->_db->table($this->_table)->get();
+
+        foreach ($migrations as $migration) {
+            if ($migration->status === "completed") {
+                echo "Migration {$migration->name} status: completed\n";
+            } elseif ($migration->status === "pending") {
+                echo "Migration {$migration->name} status: pending\n";
+            } else {
+                echo "Migration {$migration->name} status: unknown\n";
+            }
+        }
+    }
+
+    /**
+     * Display the status of a specific migration.
+     *
+     * @param string $fileName The name of the migration file.
+     * @return void
+     */
+    private function _getStatusOfMigration(string $fileName): void
+    {
+        $migration = $this->_db
+            ->table($this->_table)
+            ->where("name", $fileName)
+            ->first();
+
+        if (!$migration) {
+            echo "Migration not found\n";
+            return;
+        }
+
+        $migrationClass =
+            $this->_folder . DIRECTORY_SEPARATOR . $fileName . ".php";
+
+        if (!file_exists($migrationClass)) {
+            echo "Migration file not found\n";
+            return;
+        }
+
+        if ($migration->status === "completed") {
+            echo "Migration $fileName status: completed\n";
+        } elseif ($migration->status === "pending") {
+            echo "Migration $fileName status: pending\n";
+        } else {
+            echo "Migration $fileName status: unknown\n";
+        }
     }
 }
