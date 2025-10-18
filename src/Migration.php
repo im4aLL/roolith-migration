@@ -5,13 +5,14 @@ namespace Roolith\Migration;
 use Roolith\Migration\Command\MigrationCommandFactory;
 use Roolith\Migration\Interfaces\MigrationCoreInterface;
 use Roolith\Store\Database;
+use Roolith\Store\Interfaces\DatabaseInterface;
 
 class Migration implements MigrationCoreInterface
 {
     private string $_folder = "migrations";
     private string $_table = "migrations";
     private array $_dbConfig = [];
-    protected Database $db;
+    protected DatabaseInterface $db;
 
     public function __construct()
     {
