@@ -32,7 +32,8 @@ class MigrationCommandFactory
             return $commandInstance;
         }
 
-        throw new \InvalidArgumentException("Unknown command: $command");
+        echo "Unknown command: $command";
+        return null;
     }
 
     /**

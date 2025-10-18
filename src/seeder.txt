@@ -1,0 +1,9 @@
+<?php
+
+use Roolith\Migration\Interfaces\SeederInterface;
+use Roolith\Store\Database;
+
+class {filename} implements SeederInterface
+{
+    public function run(Database $db): void {}
+}

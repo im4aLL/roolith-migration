@@ -2,10 +2,10 @@
 
 namespace Roolith\Migration\Command;
 
-use Roolith\Migration\Interfaces\MigrationInterface;
+use Roolith\Migration\Interfaces\SeederInterface;
 use Roolith\Migration\MigrationUtilTraits;
 
-class MigrationRunCommand extends BaseCommand
+class SeederRunCommand extends BaseCommand
 {
     use MigrationUtilTraits;
 
@@ -38,21 +38,21 @@ class MigrationRunCommand extends BaseCommand
         }
 
         if (count($migrations) === 0) {
-            echo "No pending migrations found.\n";
+            echo "No pending seeder found.\n";
 
             return;
         }
 
-        $this->_executeMigration($migrations);
+        $this->_executeSeeder($migrations);
     }
 
     /**
-     * Execute migrations
+     * Execute seeders
      *
-     * @param array $migrations Array of migrations to execute
+     * @param array $migrations Array of seeders to execute
      * @return void
      */
-    private function _executeMigration(array $migrations): void
+    private function _executeSeeder(array $migrations): void
     {
         foreach ($migrations as $migration) {
             $migrationClass =
@@ -62,21 +62,21 @@ class MigrationRunCommand extends BaseCommand
                 ".php";
 
             if (!file_exists($migrationClass)) {
-                throw new \Exception("Migration file not found");
+                throw new \Exception("Seeder file not found");
             }
 
             require_once $migrationClass;
 
             $className = $this->_stringToPascalCase($migration->name);
-            /* @var MigrationInterface $migrationInstance */
+            /* @var SeederInterface $migrationInstance */
             $migrationInstance = new $className();
-            $migrationInstance->up($this->db);
+            $migrationInstance->run($this->db);
 
             $this->db
                 ->table($this->_table)
                 ->update(["status" => "completed"], ["id" => $migration->id]);
 
-            echo "Migration $migration->name executed successfully\n";
+            echo "Seeder $migration->name executed successfully\n";
         }
     }
 }

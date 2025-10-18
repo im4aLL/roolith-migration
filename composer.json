@@ -4,7 +4,8 @@
   "type": "library",
   "require": {
     "roolith/database": "1.4.0",
-    "php": ">=8.0"
+    "php": ">=8.0",
+    "fakerphp/faker": "^1.24"
   },
   "license": "MIT",
   "autoload": {
