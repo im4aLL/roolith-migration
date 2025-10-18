@@ -58,3 +58,41 @@ php migration.php seed:run seed_name
 - it will create migrations table if not exists
 - it will create migrations folder if not exists
 - You can change the name of the folder by passing settings
+
+## Example of migration file
+
+```bash
+php migration.php migration:create create_users_table
+```
+
+```php
+<?php
+
+use Roolith\Store\Interfaces\DatabaseInterface;
+use Roolith\Migration\Interfaces\MigrationInterface;
+
+class CreateUsersTable implements MigrationInterface
+{
+    public function up(DatabaseInterface $db): void {}
+
+    public function down(DatabaseInterface $db): void {}
+}
+```
+
+### Example of seed file
+
+```bash
+php migration.php seed:create add_users
+```
+
+```php
+<?php
+
+use Roolith\Migration\Interfaces\SeederInterface;
+use Roolith\Store\Interfaces\DatabaseInterface;
+
+class AddUsers implements SeederInterface
+{
+    public function run(DatabaseInterface $db): void {}
+}
+```
