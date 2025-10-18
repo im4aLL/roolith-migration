@@ -11,8 +11,8 @@ abstract class BaseCommand implements CommandInterface
     protected string $fileName;
     protected array $options;
 
-    private string $_folder;
-    private string $_table;
+    protected string $_folder;
+    protected string $_table;
 
     /**
      * Constructor for BaseCommand.
